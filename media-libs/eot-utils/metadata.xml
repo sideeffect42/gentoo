@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <longdescription lang="en">
+    The eot-utils are the two programs mkeot and eotinfo. The former
+    creates an EOT (Embedded OpenType) file from an OpenType or TrueType
+    font and the URLs of one or more Web pages. mkeot respects the
+    TrueType embedding bits. The eotinfo program displays the contents of
+    an EOT header in a human-readable way.
+  </longdescription>
+  <upstream>
+    <changelog>https://www.w3.org/Tools/eot-utils/ChangeLog</changelog>
+  </upstream>
+</pkgmetadata>
+
