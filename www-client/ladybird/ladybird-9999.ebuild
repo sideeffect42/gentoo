@@ -59,6 +59,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	virtual/pkgconfig
 	>=dev-build/cmake-3.25
 	dev-qt/qttools:6
 	${PYTHON_DEPS}
