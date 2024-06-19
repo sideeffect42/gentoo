@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# force ninja, the emake generator errors
 CMAKE_MAKEFILE_GENERATOR=ninja
 inherit cmake
 
