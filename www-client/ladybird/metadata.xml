@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dennis.camera+gentoo@riiengineering.ch</email>
+    <description>Primary maintainer</description>
+  </maintainer>
+  <use>
+    <flag name="qt6">Build ladybird application using Qt 6 GUI</flag>
+  </use>
+</pkgmetadata>
