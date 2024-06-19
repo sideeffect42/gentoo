@@ -102,6 +102,7 @@ src_configure() {
 		-DSERENITY_CACHE_DIR="${SERENITY_CACHE_DIR:?}"
 		-DENABLE_NETWORK_DOWNLOADS=off
 		-DENABLE_QT=$(usex gui)
+		-DBUILD_TESTING=$(usex test)
 	)
 
 	cmake_src_configure
