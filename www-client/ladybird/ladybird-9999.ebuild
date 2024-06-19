@@ -32,7 +32,7 @@ LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 
-IUSE="+qt6 test"
+IUSE="+gui test"
 
 RESTRICT="!test? ( test )"
 
@@ -45,7 +45,7 @@ RDEPEND="
 	media-libs/libjpeg-turbo:0=
 	x11-libs/libxkbcommon
 	virtual/libcrypt:=
-	qt6? (
+	gui? (
 		dev-qt/qtbase:6
 		dev-qt/qtwidgets:6
 		dev-qt/qtnetwork:6
@@ -98,7 +98,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DSERENITY_CACHE_DIR="${SERENITY_CACHE_DIR:?}"
 		-DENABLE_NETWORK_DOWNLOADS=off
-		-DENABLE_QT=$(usex qt6)
+		-DENABLE_QT=$(usex gui)
 	)
 
 	cmake_src_configure
