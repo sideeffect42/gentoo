@@ -72,26 +72,26 @@ SERENITY_CACHE_DIR="${WORKDIR}/caches"
 src_unpack() {
 	git-r3_src_unpack
 
-	mkdir "${SERENITY_CACHE_DIR:?}"
+	mkdir "${SERENITY_CACHE_DIR:?}" || die
 
 	# install additional distfiles
 
-	mkdir "${SERENITY_CACHE_DIR:?}/CACERT"
-	printf '%s' "${EXTRA_CACERT_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/CACERT/version.txt"
-	cp -v "${DISTDIR:?}/cacert-${EXTRA_CACERT_VERSION:?}.pem" "${SERENITY_CACHE_DIR:?}/CACERT/cacert-${EXTRA_CACERT_VERSION:?}.pem"
+	mkdir "${SERENITY_CACHE_DIR:?}/CACERT" || die
+	printf '%s' "${EXTRA_CACERT_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/CACERT/version.txt" || die
+	cp -v "${DISTDIR:?}/cacert-${EXTRA_CACERT_VERSION:?}.pem" "${SERENITY_CACHE_DIR:?}/CACERT/cacert-${EXTRA_CACERT_VERSION:?}.pem" || die
 
-	mkdir "${SERENITY_CACHE_DIR:?}/UCD"
-	printf '%s' "${EXTRA_UCD_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/UCD/version.txt"
-	(cd "${SERENITY_CACHE_DIR:?}/UCD" && unpack "UCD-${EXTRA_UCD_VERSION:?}.zip")
-	cp -v "${DISTDIR:?}/emoji-test-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/emoji-test.txt"
-	cp -v "${DISTDIR:?}/IdnaMappingTable-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/IdnaMappingTable.txt"
+	mkdir "${SERENITY_CACHE_DIR:?}/UCD" || die
+	printf '%s' "${EXTRA_UCD_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/UCD/version.txt" || die
+	(cd "${SERENITY_CACHE_DIR:?}/UCD" && unpack "UCD-${EXTRA_UCD_VERSION:?}.zip") || die
+	cp -v "${DISTDIR:?}/emoji-test-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/emoji-test.txt" || die
+	cp -v "${DISTDIR:?}/IdnaMappingTable-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/IdnaMappingTable.txt" || die
 
-	mkdir "${SERENITY_CACHE_DIR:?}/TZDB"
-	printf '%s' "${EXTRA_TZDB_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/TZDB/version.txt"
-	(cd "${SERENITY_CACHE_DIR:?}/TZDB" && unpack "tzdata${EXTRA_TZDB_VERSION:?}.tar.gz")
+	mkdir "${SERENITY_CACHE_DIR:?}/TZDB" || die
+	printf '%s' "${EXTRA_TZDB_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/TZDB/version.txt" || die
+	(cd "${SERENITY_CACHE_DIR:?}/TZDB" && unpack "tzdata${EXTRA_TZDB_VERSION:?}.tar.gz") || die
 
-	mkdir "${SERENITY_CACHE_DIR:?}/PublicSuffix"
-	cp -v "${DISTDIR:?}/public_suffix_list.dat" "${SERENITY_CACHE_DIR:?}/PublicSuffix/public_suffix_list.dat"
+	mkdir "${SERENITY_CACHE_DIR:?}/PublicSuffix" || die
+	cp -v "${DISTDIR:?}/public_suffix_list.dat" "${SERENITY_CACHE_DIR:?}/PublicSuffix/public_suffix_list.dat" || die
 }
 
 src_configure() {
