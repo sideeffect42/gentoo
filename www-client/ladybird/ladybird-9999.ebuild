@@ -65,7 +65,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/ByteBuffer-overflow.patch"
+	"${FILESDIR:?}/ByteBuffer-overflow.patch"
+	"${FILESDIR:?}/ARMv8-CRC32.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
