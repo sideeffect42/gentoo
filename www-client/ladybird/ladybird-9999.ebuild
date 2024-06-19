@@ -6,6 +6,9 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR=ninja
 inherit cmake
 
+PYTHON_COMPAT=( python3_{6..12} )
+inherit python-any-r1
+
 inherit git-r3
 EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
 EGIT_COMMIT="25c43554069f21596103b09932cbc51690a05b8a"  # newer commits require skia
@@ -57,7 +60,7 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	>=dev-build/cmake-3.25
 	dev-qt/qttools:6
-	>=dev-lang/python-3.6
+	${PYTHON_DEPS}
 "
 
 PATCHES=(
