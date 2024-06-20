@@ -44,7 +44,7 @@ RDEPEND="
 	>=dev-db/sqlite-3
 	media-libs/fontconfig
 	media-libs/libjpeg-turbo:0=
-	x11-libs/libxkbcommon
+	>=x11-libs/libxkbcommon-0.5.0
 	virtual/libcrypt:=
 	gui? (
 		dev-qt/qtbase:6
