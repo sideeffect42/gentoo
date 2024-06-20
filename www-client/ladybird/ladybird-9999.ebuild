@@ -71,6 +71,7 @@ PATCHES=(
 	"${FILESDIR:?}/dont-install-libwasm-tests.patch"
 	"${FILESDIR:?}/ppc64.patch"
 	"${FILESDIR:?}/big-endian.patch"
+	"${FILESDIR:?}/musl-no-execinfo.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
