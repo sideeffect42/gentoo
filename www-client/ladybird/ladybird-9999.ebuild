@@ -104,6 +104,8 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBEXECDIR=libexec/Lagom
+		-DCMAKE_INSTALL_INCLUDEDIR=include/Lagom
 		-DSERENITY_CACHE_DIR="${SERENITY_CACHE_DIR:?}"
 		-DENABLE_NETWORK_DOWNLOADS=off
 		-DENABLE_QT=$(usex gui)
