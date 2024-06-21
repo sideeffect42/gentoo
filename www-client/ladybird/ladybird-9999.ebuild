@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit desktop
+
 # force ninja, the emake generator errors
 CMAKE_MAKEFILE_GENERATOR=ninja
 inherit cmake
@@ -114,4 +116,30 @@ src_configure() {
 	)
 
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+
+	# install launcher
+	for s in 16 32
+	do
+		newicon -s $((s)) -c apps -t hicolor "${S:?}/Base/res/icons/$((s))x$((s))/app-browser.png" ladybird.png
+	done
+
+	domenu "${FILESDIR:?}/${PN}.desktop"
+}
+
+pkg_postinst() {
+	default
+
+	xdg_icon_cache_update
+	xdg_desktop_database_update
+}
+
+pkg_postrm() {
+	default
+
+	xdg_icon_cache_update
+	xdg_desktop_database_update
 }

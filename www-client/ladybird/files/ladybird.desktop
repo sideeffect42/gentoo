@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Ladybird
+Comment=Truly independent web browser
+Exec=/usr/bin/Ladybird %u
+Icon=ladybird
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
