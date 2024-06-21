@@ -73,6 +73,7 @@ PATCHES=(
 	"${FILESDIR:?}/big-endian.patch"
 	"${FILESDIR:?}/musl-no-execinfo.patch"
 	"${FILESDIR:?}/no-install-testfiles.patch"
+	"${FILESDIR:?}/no-install-generators.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
