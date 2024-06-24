@@ -48,6 +48,7 @@ RDEPEND="
 	media-libs/libjpeg-turbo:0=
 	>=x11-libs/libxkbcommon-0.5.0
 	virtual/libcrypt:=
+	media-libs/libpng[apng]
 	gui? (
 		dev-qt/qtbase:6
 		dev-qt/qtwidgets:6
