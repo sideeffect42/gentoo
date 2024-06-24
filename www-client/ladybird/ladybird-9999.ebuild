@@ -45,6 +45,8 @@ RDEPEND="
 	>=x11-libs/libxkbcommon-0.5.0
 	virtual/libcrypt:=
 	media-libs/libpng[apng]
+	sys-libs/zlib
+	media-libs/libglvnd
 	gui? (
 		dev-qt/qtbase:6
 		dev-qt/qtwidgets:6
