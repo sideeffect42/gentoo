@@ -126,15 +126,11 @@ src_install() {
 }
 
 pkg_postinst() {
-	default
-
 	xdg_icon_cache_update
 	xdg_desktop_database_update
 }
 
 pkg_postrm() {
-	default
-
 	xdg_icon_cache_update
 	xdg_desktop_database_update
 }
