@@ -17,13 +17,9 @@ EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
 
 EXTRA_CACERT_VERSION="2023-12-12"
 EXTRA_TZDB_VERSION="2024a"
-EXTRA_UCD_VERSION="15.1.0"
 
 SRC_URI="
 	https://curl.se/ca/cacert-${EXTRA_CACERT_VERSION:?}.pem
-	https://www.unicode.org/Public/${EXTRA_UCD_VERSION:?}/ucd/UCD.zip -> UCD-${EXTRA_UCD_VERSION:?}.zip
-	https://www.unicode.org/Public/emoji/${EXTRA_UCD_VERSION%.0}/emoji-test.txt -> emoji-test-${EXTRA_UCD_VERSION:?}.txt
-	https://www.unicode.org/Public/idna/${EXTRA_UCD_VERSION:?}/IdnaMappingTable.txt -> IdnaMappingTable-${EXTRA_UCD_VERSION:?}.txt
 	https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat
 	https://data.iana.org/time-zones/releases/tzdata${EXTRA_TZDB_VERSION:?}.tar.gz
 "
@@ -93,12 +89,6 @@ src_unpack() {
 	mkdir "${SERENITY_CACHE_DIR:?}/CACERT" || die
 	printf '%s' "${EXTRA_CACERT_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/CACERT/version.txt" || die
 	cp -v "${DISTDIR:?}/cacert-${EXTRA_CACERT_VERSION:?}.pem" "${SERENITY_CACHE_DIR:?}/CACERT/cacert-${EXTRA_CACERT_VERSION:?}.pem" || die
-
-	mkdir "${SERENITY_CACHE_DIR:?}/UCD" || die
-	printf '%s' "${EXTRA_UCD_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/UCD/version.txt" || die
-	(cd "${SERENITY_CACHE_DIR:?}/UCD" && unpack "UCD-${EXTRA_UCD_VERSION:?}.zip") || die
-	cp -v "${DISTDIR:?}/emoji-test-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/emoji-test.txt" || die
-	cp -v "${DISTDIR:?}/IdnaMappingTable-${EXTRA_UCD_VERSION:?}.txt" "${SERENITY_CACHE_DIR:?}/UCD/IdnaMappingTable.txt" || die
 
 	mkdir "${SERENITY_CACHE_DIR:?}/TZDB" || die
 	printf '%s' "${EXTRA_TZDB_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/TZDB/version.txt" || die

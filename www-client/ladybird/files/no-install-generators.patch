@@ -53,13 +53,9 @@ diff --git a/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt b/Meta/La
 index a03d4cda73..5253994bb7 100644
 --- a/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt
 +++ b/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt
-@@ -1,3 +1,3 @@
--lagom_tool(GenerateUnicodeData SOURCES GenerateUnicodeData.cpp LIBS LibMain)
+@@ -1,1 +1,1 @@
 -lagom_tool(GenerateEmojiData SOURCES GenerateEmojiData.cpp LIBS LibMain)
--lagom_tool(GenerateIDNAData SOURCES GenerateIDNAData.cpp LIBS LibMain)
-+lagom_tool(GenerateUnicodeData SOURCES GenerateUnicodeData.cpp LIBS LibMain INSTALL NO)
 +lagom_tool(GenerateEmojiData SOURCES GenerateEmojiData.cpp LIBS LibMain INSTALL NO)
-+lagom_tool(GenerateIDNAData SOURCES GenerateIDNAData.cpp LIBS LibMain INSTALL NO)
 diff --git a/Meta/Lagom/Tools/CodeGenerators/LibWeb/BindingsGenerator/CMakeLists.txt b/Meta/Lagom/Tools/CodeGenerators/LibWeb/BindingsGenerator/CMakeLists.txt
 index 98e74e4583..7c84c74a9b 100644
 --- a/Meta/Lagom/Tools/CodeGenerators/LibWeb/BindingsGenerator/CMakeLists.txt
