@@ -69,7 +69,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR:?}/ByteBuffer-overflow.patch"
 	"${FILESDIR:?}/ARMv8-CRC32.patch"
-	"${FILESDIR:?}/dont-install-libwasm-tests.patch"
 	"${FILESDIR:?}/ppc64.patch"
 	"${FILESDIR:?}/big-endian.patch"
 	"${FILESDIR:?}/musl-no-execinfo.patch"
