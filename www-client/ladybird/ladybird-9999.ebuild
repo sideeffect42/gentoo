@@ -14,7 +14,6 @@ inherit python-any-r1
 
 inherit git-r3
 EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
-EGIT_COMMIT="25c43554069f21596103b09932cbc51690a05b8a"  # newer commits require skia
 
 EXTRA_CACERT_VERSION="2023-12-12"
 EXTRA_TZDB_VERSION="2024a"
@@ -77,6 +76,8 @@ PATCHES=(
 	"${FILESDIR:?}/musl-no-execinfo.patch"
 	"${FILESDIR:?}/no-install-testfiles.patch"
 	"${FILESDIR:?}/no-install-generators.patch"
+	# couldn't figure out how to build this trash fire
+	"${FILESDIR:?}/byebye-skia.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
