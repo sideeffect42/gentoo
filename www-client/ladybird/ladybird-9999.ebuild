@@ -16,12 +16,10 @@ inherit git-r3
 EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
 
 EXTRA_CACERT_VERSION="2023-12-12"
-EXTRA_TZDB_VERSION="2024a"
 
 SRC_URI="
 	https://curl.se/ca/cacert-${EXTRA_CACERT_VERSION:?}.pem
 	https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat
-	https://data.iana.org/time-zones/releases/tzdata${EXTRA_TZDB_VERSION:?}.tar.gz
 "
 
 DESCRIPTION="Ladybird is an ongoing project to build a truly independent web browser from scratch."
@@ -89,10 +87,6 @@ src_unpack() {
 	mkdir "${SERENITY_CACHE_DIR:?}/CACERT" || die
 	printf '%s' "${EXTRA_CACERT_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/CACERT/version.txt" || die
 	cp -v "${DISTDIR:?}/cacert-${EXTRA_CACERT_VERSION:?}.pem" "${SERENITY_CACHE_DIR:?}/CACERT/cacert-${EXTRA_CACERT_VERSION:?}.pem" || die
-
-	mkdir "${SERENITY_CACHE_DIR:?}/TZDB" || die
-	printf '%s' "${EXTRA_TZDB_VERSION:?}" >"${SERENITY_CACHE_DIR:?}/TZDB/version.txt" || die
-	(cd "${SERENITY_CACHE_DIR:?}/TZDB" && unpack "tzdata${EXTRA_TZDB_VERSION:?}.tar.gz") || die
 
 	mkdir "${SERENITY_CACHE_DIR:?}/PublicSuffix" || die
 	cp -v "${DISTDIR:?}/public_suffix_list.dat" "${SERENITY_CACHE_DIR:?}/PublicSuffix/public_suffix_list.dat" || die
