@@ -71,7 +71,6 @@ PATCHES=(
 	"${FILESDIR:?}/ARMv8-CRC32.patch"
 	"${FILESDIR:?}/ppc64.patch"
 	"${FILESDIR:?}/big-endian.patch"
-	"${FILESDIR:?}/musl-no-execinfo.patch"
 	"${FILESDIR:?}/no-install-testfiles.patch"
 	"${FILESDIR:?}/no-install-generators.patch"
 	# couldn't figure out how to build this trash fire
