@@ -1,35 +1,3 @@
-diff --git a/Ladybird/AppKit/main.mm b/Ladybird/AppKit/main.mm
-index 9315beb62b..93bb66012c 100644
---- a/Ladybird/AppKit/main.mm
-+++ b/Ladybird/AppKit/main.mm
-@@ -97,1 +97,0 @@ ErrorOr<int> serenity_main(Main::Arguments arguments)
--    args_parser.add_option(use_skia_painting, "Enable Skia painting", "enable-skia-painting");
-diff --git a/Ladybird/HelperProcess.cpp b/Ladybird/HelperProcess.cpp
-index 54d3431ffd..7c48f7e7e1 100644
---- a/Ladybird/HelperProcess.cpp
-+++ b/Ladybird/HelperProcess.cpp
-@@ -92,2 +92,0 @@ ErrorOr<NonnullRefPtr<WebView::WebContentClient>> launch_web_content_process(
--    if (web_content_options.enable_skia_painting == Ladybird::EnableSkiaPainting::Yes)
--        arguments.append("--use-skia-painting"sv);
-diff --git a/Ladybird/Qt/main.cpp b/Ladybird/Qt/main.cpp
-index 481ab5a46b..53adcd2133 100644
---- a/Ladybird/Qt/main.cpp
-+++ b/Ladybird/Qt/main.cpp
-@@ -111,1 +111,0 @@ ErrorOr<int> serenity_main(Main::Arguments arguments)
--    args_parser.add_option(use_skia_painting, "Enable Skia painting", "enable-skia-painting");
-diff --git a/Ladybird/WebContent/main.cpp b/Ladybird/WebContent/main.cpp
-index 1c91929c8b..c6bd6a7ae8 100644
---- a/Ladybird/WebContent/main.cpp
-+++ b/Ladybird/WebContent/main.cpp
-@@ -104,1 +104,0 @@ ErrorOr<int> serenity_main(Main::Arguments arguments)
--    bool use_skia_painter = false;
-@@ -118,1 +117,0 @@ ErrorOr<int> serenity_main(Main::Arguments arguments)
--    args_parser.add_option(use_skia_painter, "Enable Skia painter", "use-skia-painting");
-@@ -141,3 +139,0 @@ ErrorOr<int> serenity_main(Main::Arguments arguments)
--    if (use_skia_painter) {
--        WebContent::PageClient::set_use_skia_painter();
--    }
--
 diff --git a/Userland/Libraries/LibWeb/CMakeLists.txt b/Userland/Libraries/LibWeb/CMakeLists.txt
 index 8f8b473375..af8b2e188f 100644
 --- a/Userland/Libraries/LibWeb/CMakeLists.txt
@@ -47,10 +15,7 @@ diff --git a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp b/Userland/
 index 3c41b16a76..6cbd4d5461 100644
 --- a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
 +++ b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
-@@ -1204,18 +1204,6 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
-             has_warned_about_configuration = true;
-         }
- #endif
+@@ -1207,12 +1207,0 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
 -    } else if (display_list_player_type == DisplayListPlayerType::Skia) {
 -#ifdef AK_OS_MACOS
 -        if (m_metal_context && m_skia_backend_context && is<Painting::IOSurfaceBackingStore>(target)) {
@@ -63,23 +28,6 @@ index 3c41b16a76..6cbd4d5461 100644
 -#endif
 -        Painting::DisplayListPlayerSkia player(target.bitmap());
 -        display_list.execute(player);
-     } else {
-         Painting::DisplayListPlayerCPU player(target.bitmap());
-         display_list.execute(player);
-diff --git a/Userland/Libraries/LibWeb/HTML/diff --git a/Userland/Libraries/LibWeb/Page/Page.h b/Userland/Libraries/LibWeb/Page/Page.h
-index db23de3a8f..742b02e19f 100644
---- a/Userland/Libraries/LibWeb/Page/Page.h
-+++ b/Userland/Libraries/LibWeb/Page/Page.h
-@@ -279,8 +279,7 @@ struct PaintOptions {
- 
- enum class PaintingCommandExecutorType {
-     CPU,
--    GPU,
--    Skia
-+    GPU
- };
- 
- class PageClient : public JS::Cell {
 diff --git a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp b/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
 index d2d1259763..64bdba2d71 100644
 --- a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
@@ -98,18 +46,13 @@ index 476d6192d5..a8c126e16e 100644
 +++ b/Userland/Services/WebContent/PageClient.cpp
 @@ -35,1 +35,0 @@
 -static bool s_use_skia_painter = false;
-@@ -44,5 +43,0 @@ void PageClient::set_use_gpu_painter()
--void PageClient::set_use_skia_painter()
--{
+@@ -44,5 +43,5 @@ void PageClient::set_use_gpu_painter()
+ void PageClient::set_use_skia_painter()
+ {
 -    s_use_skia_painter = true;
--}
--
-@@ -747,2 +741,0 @@ Web::PaintingCommandExecutorType PageClient::painting_command_executor_type() co
++    warnln("Skia painter is not available in this build.");
+ }
+ 
+@@ -747,2 +746,0 @@ Web::PaintingCommandExecutorType PageClient::painting_command_executor_type() co
 -    if (s_use_skia_painter)
 -        return Web::DisplayListPlayerType::Skia;
-diff --git a/Userland/Services/WebContent/PageClient.h b/Userland/Services/WebContent/PageClient.h
-index 1cc06b4236..68aa492363 100644
---- a/Userland/Services/WebContent/PageClient.h
-+++ b/Userland/Services/WebContent/PageClient.h
-@@ -35,1 +35,0 @@ public:
--    static void set_use_skia_painter();
