@@ -42,13 +42,6 @@ index 32d9aced25..06e25a40a5 100644
 @@ -1 +1 @@
 -lagom_tool(GenerateEncodingIndexes SOURCES GenerateEncodingIndexes.cpp LIBS LibMain)
 +lagom_tool(GenerateEncodingIndexes SOURCES GenerateEncodingIndexes.cpp LIBS LibMain INSTALL NO)
-diff --git a/Meta/Lagom/Tools/CodeGenerators/LibTimeZone/CMakeLists.txt b/Meta/Lagom/Tools/CodeGenerators/LibTimeZone/CMakeLists.txt
-index 07bfbd90c4..15dc982122 100644
---- a/Meta/Lagom/Tools/CodeGenerators/LibTimeZone/CMakeLists.txt
-+++ b/Meta/Lagom/Tools/CodeGenerators/LibTimeZone/CMakeLists.txt
-@@ -1 +1 @@
--lagom_tool(GenerateTimeZoneData SOURCES GenerateTimeZoneData.cpp LIBS LibMain)
-+lagom_tool(GenerateTimeZoneData SOURCES GenerateTimeZoneData.cpp LIBS LibMain INSTALL NO)
 diff --git a/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt b/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt
 index a03d4cda73..5253994bb7 100644
 --- a/Meta/Lagom/Tools/CodeGenerators/LibUnicode/CMakeLists.txt
