@@ -2,7 +2,7 @@ diff --git a/Userland/Libraries/LibWeb/CMakeLists.txt b/Userland/Libraries/LibWe
 index 8f8b473375..af8b2e188f 100644
 --- a/Userland/Libraries/LibWeb/CMakeLists.txt
 +++ b/Userland/Libraries/LibWeb/CMakeLists.txt
-@@ -543,1 +543,0 @@ set(SOURCES
+@@ -546,1 +546,0 @@ set(SOURCES
 -    Painting/DisplayListPlayerSkia.cpp
 @@ -755,5 +754,3 @@ set(GENERATED_SOURCES
 -find_package(unofficial-skia CONFIG REQUIRED)
@@ -15,8 +15,9 @@ diff --git a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp b/Userland/
 index 3c41b16a76..6cbd4d5461 100644
 --- a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
 +++ b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
-@@ -1207,12 +1207,0 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
--    } else if (display_list_player_type == DisplayListPlayerType::Skia) {
+@@ -1190,13 +1190,1 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
+-    auto display_list_player_type = page().client().display_list_player_type();
+-    if (display_list_player_type == DisplayListPlayerType::Skia) {
 -#ifdef AK_OS_MACOS
 -        if (m_metal_context && m_skia_backend_context && is<Painting::IOSurfaceBackingStore>(target)) {
 -            auto& iosurface_backing_store = static_cast<Painting::IOSurfaceBackingStore&>(target);
@@ -28,13 +29,14 @@ index 3c41b16a76..6cbd4d5461 100644
 -#endif
 -        Painting::DisplayListPlayerSkia player(target.bitmap());
 -        display_list.execute(player);
++    if (0) {
 diff --git a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp b/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
 index d2d1259763..64bdba2d71 100644
 --- a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
 +++ b/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
 @@ -19,1 +19,0 @@
 -#include <LibWeb/Painting/DisplayListPlayerSkia.h>
-@@ -109,5 +108,0 @@ RefPtr<Gfx::Bitmap> SVGDecodedImageData::render(Gfx::IntSize size) const
+@@ -108,5 +107,0 @@ RefPtr<Gfx::Bitmap> SVGDecodedImageData::render(Gfx::IntSize size) const
 -    case DisplayListPlayerType::Skia: {
 -        Painting::DisplayListPlayerSkia executor { *bitmap };
 -        display_list.execute(executor);
@@ -44,15 +46,15 @@ diff --git a/Userland/Services/WebContent/PageClient.cpp b/Userland/Services/Web
 index 476d6192d5..a8c126e16e 100644
 --- a/Userland/Services/WebContent/PageClient.cpp
 +++ b/Userland/Services/WebContent/PageClient.cpp
-@@ -35,1 +35,0 @@
+@@ -30,1 +30,0 @@
 -static bool s_use_skia_painter = false;
-@@ -44,5 +43,5 @@ void PageClient::set_use_gpu_painter()
+@@ -34,5 +33,5 @@ void PageClient::set_use_gpu_painter()
  void PageClient::set_use_skia_painter()
  {
 -    s_use_skia_painter = true;
 +    warnln("Skia painter is not available in this build.");
  }
  
-@@ -747,2 +746,0 @@ Web::PaintingCommandExecutorType PageClient::painting_command_executor_type() co
+@@ -735,2 +734,0 @@ Web::PaintingCommandExecutorType PageClient::painting_command_executor_type() co
 -    if (s_use_skia_painter)
 -        return Web::DisplayListPlayerType::Skia;
