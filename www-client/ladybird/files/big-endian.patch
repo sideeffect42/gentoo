@@ -1,44 +1,3 @@
-diff --git a/AK/FloatingPointStringConversions.cpp b/AK/FloatingPointStringConversions.cpp
-index 9298d62241..63b73f0f2c 100644
---- a/AK/FloatingPointStringConversions.cpp
-+++ b/AK/FloatingPointStringConversions.cpp
-@@ -176,8 +176,6 @@ static constexpr auto max_representable_power_of_ten_in_u64 = 19;
- static_assert(1e19 <= static_cast<double>(NumericLimits<u64>::max()));
- static_assert(1e20 >= static_cast<double>(NumericLimits<u64>::max()));
-
--static_assert(HostIsLittleEndian, "Float parsing currently assumes little endian, this fact is only used in fast parsing of 8 digits at a time"
--                                  "\nyou _should_ only need to change read eight_digits to make this big endian compatible.");
- constexpr u64 read_eight_digits(char const* string)
- {
-     u64 val;
-@@ -206,6 +204,7 @@ constexpr static u32 eight_digits_to_value(u64 value)
- {
-     // THIS DOES ABSOLUTELY ASSUME has_eight_digits is true
-
-+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-     // This trick is based on https://johnnylee-sde.github.io/Fast-numeric-string-to-int/
-     // FIXME: fast_float uses a slightly different version, but that is far harder
-     //        to understand and does not seem to improve performance substantially.
-@@ -238,6 +237,19 @@ constexpr static u32 eight_digits_to_value(u64 value)
-
-     // With the example this gives 0x$$$$$$$$00bc614e
-     //                                       12345678
-+#else
-+    value -= 0x3030303030303030;
-+
-+    value = (value&0x0fL)
-+        + ((value&(0x0fL<< 8)) >>  8) *       10
-+        + ((value&(0x0fL<<16)) >> 16) *      100
-+        + ((value&(0x0fL<<24)) >> 24) *     1000
-+        + ((value&(0x0fL<<32)) >> 32) *    10000
-+        + ((value&(0x0fL<<40)) >> 40) *   100000
-+        + ((value&(0x0fL<<48)) >> 48) *  1000000
-+        + ((value&(0x0fL<<56)) >> 56) * 10000000;
-+#endif
-+
-     // Now we just truncate to the lower part
-     return u32(value);
- }
 diff --git a/AK/StringBase.h b/AK/StringBase.h
 index 541f7b8bdd..40eabf2d40 100644
 --- a/AK/StringBase.h
@@ -167,3 +126,218 @@ index fb3d018fd9..fabbce2869 100644
 
      return {};
  }
+commit 480ddb937bc21a05d70f186bf2b875daf5792724
+Author:     Dennis Camera <dennis.camera+ladybird@riiengineering.ch>
+AuthorDate: Thu Jul 4 11:09:20 2024 +0200
+Commit:     Dennis Camera <dennis.camera+ladybird@riiengineering.ch>
+CommitDate: Thu Jul 4 21:22:00 2024 +0200
+
+    AK: Implement floating-point conversions for big-endian
+
+diff --git a/AK/FloatingPoint.h b/AK/FloatingPoint.h
+index 3aa1a01e51..86bb813c97 100644
+--- a/AK/FloatingPoint.h
++++ b/AK/FloatingPoint.h
+@@ -25,9 +25,15 @@ union FloatExtractor<f128> {
+     static constexpr int exponent_bits = 15;
+     static constexpr unsigned exponent_max = 32767;
+     struct [[gnu::packed]] {
++#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++        ComponentType sign : 1;
++        ComponentType exponent : 15;
++        ComponentType mantissa : 112;
++#    else
+         ComponentType mantissa : 112;
+         ComponentType exponent : 15;
+         ComponentType sign : 1;
++#    endif
+     };
+     f128 d;
+ };
+@@ -51,9 +57,15 @@ union FloatExtractor<f80> {
+         // However, since all bit-fiddling float code assumes IEEE floats, it cannot handle this properly.
+         // If we pretend that 80-bit floats are IEEE floats with 64-bit mantissas, almost everything works correctly
+         // and we just need a few special cases.
++#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++        ComponentType sign : 1;
++        ComponentType exponent : 15;
++        ComponentType mantissa : 64;
++#    else
+         ComponentType mantissa : 64;
+         ComponentType exponent : 15;
+         ComponentType sign : 1;
++#    endif
+     };
+     f80 d;
+ };
+@@ -76,9 +88,15 @@ union FloatExtractor<f64> {
+         //        very intuitive and portable behaviour on windows, but it doesn't
+         //        work with the msvc ABI.
+         //        See <https://github.com/llvm/llvm-project/issues/24757>
++#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++        ComponentType sign : 1;
++        ComponentType exponent : 11;
++        ComponentType mantissa : 52;
++#else
+         ComponentType mantissa : 52;
+         ComponentType exponent : 11;
+         ComponentType sign : 1;
++#endif
+     };
+     f64 d;
+ };
+@@ -93,9 +111,15 @@ union FloatExtractor<f32> {
+     static constexpr int exponent_bits = 8;
+     static constexpr ComponentType exponent_max = 255;
+     struct [[gnu::packed]] {
++#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++        ComponentType sign : 1;
++        ComponentType exponent : 8;
++        ComponentType mantissa : 23;
++#else
+         ComponentType mantissa : 23;
+         ComponentType exponent : 8;
+         ComponentType sign : 1;
++#endif
+     };
+     f32 d;
+ };
+diff --git a/AK/FloatingPointStringConversions.cpp b/AK/FloatingPointStringConversions.cpp
+index 9298d62241..9fea3f9cda 100644
+--- a/AK/FloatingPointStringConversions.cpp
++++ b/AK/FloatingPointStringConversions.cpp
+@@ -176,8 +176,6 @@ static constexpr auto max_representable_power_of_ten_in_u64 = 19;
+ static_assert(1e19 <= static_cast<double>(NumericLimits<u64>::max()));
+ static_assert(1e20 >= static_cast<double>(NumericLimits<u64>::max()));
+ 
+-static_assert(HostIsLittleEndian, "Float parsing currently assumes little endian, this fact is only used in fast parsing of 8 digits at a time"
+-                                  "\nyou _should_ only need to change read eight_digits to make this big endian compatible.");
+ constexpr u64 read_eight_digits(char const* string)
+ {
+     u64 val;
+@@ -206,40 +204,57 @@ constexpr static u32 eight_digits_to_value(u64 value)
+ {
+     // THIS DOES ABSOLUTELY ASSUME has_eight_digits is true
+ 
+-    // This trick is based on https://johnnylee-sde.github.io/Fast-numeric-string-to-int/
+-    // FIXME: fast_float uses a slightly different version, but that is far harder
+-    //        to understand and does not seem to improve performance substantially.
+-    //        See https://github.com/fastfloat/fast_float/pull/28
++    if constexpr (AK::HostIsLittleEndian) {
++        // This trick is based on https://johnnylee-sde.github.io/Fast-numeric-string-to-int/
++        // FIXME: fast_float uses a slightly different version, but that is far harder
++        //        to understand and does not seem to improve performance substantially.
++        //        See https://github.com/fastfloat/fast_float/pull/28
+ 
+-    // First convert the digits to their respectively numbers (0x30 -> 0x00 etc.)
+-    value -= 0x3030303030303030;
++        // First convert the digits to their respectively numbers (0x30 -> 0x00 etc.)
++        value -= 0x3030303030303030;
+ 
+-    // Because of little endian the first number will in fact be the least significant
+-    // bits of value i.e. "12345678" -> 0x0807060504030201
+-    // This means that we need to shift/multiply each digit with 8 - the byte it is in
+-    // So the eight need to go down, and the 01 need to be multiplied with 10000000
++        // Because of little endian the first number will in fact be the least significant
++        // bits of value i.e. "12345678" -> 0x0807060504030201
++        // This means that we need to shift/multiply each digit with 8 - the byte it is in
++        // So the eight need to go down, and the 01 need to be multiplied with 10000000
+ 
+-    // We effectively multiply by 10 and then shift those values to the right (2^8 = 256)
+-    // We then shift the values back down, this leads to 4 digits pairs in the 2 byte parts
+-    // The values between are "garbage" which we will ignore
+-    value = (value * (256 * 10 + 1)) >> 8;
+-    // So with our example this gives 0x$$4e$$38$$22$$0c, where $$ is garbage/ignored
+-    // In decimal this gives              78  56  34  12
++        // We effectively multiply by 10 and then shift those values to the right (2^8 = 256)
++        // We then shift the values back down, this leads to 4 digits pairs in the 2 byte parts
++        // The values between are "garbage" which we will ignore
++        value = (value * (256 * 10 + 1)) >> 8;
++        // So with our example this gives 0x$$4e$$38$$22$$0c, where $$ is garbage/ignored
++        // In decimal this gives              78  56  34  12
+ 
+-    // Now we keep performing the same trick twice more
+-    // First * 100 and shift of 16 (2^16 = 65536) and then shift back
+-    value = ((value & 0x00FF00FF00FF00FF) * (65536 * 100 + 1)) >> 16;
++        // Now we keep performing the same trick twice more
++        // First * 100 and shift of 16 (2^16 = 65536) and then shift back
++        value = ((value & 0x00FF00FF00FF00FF) * (65536 * 100 + 1)) >> 16;
+ 
+-    // Again with our example this gives 0x$$$$162e$$$$04d2
+-    //                                         5678    1234
++        // Again with our example this gives 0x$$$$162e$$$$04d2
++        //                                         5678    1234
+ 
+-    // And finally with * 10000 and shift of 32 (2^32 = 4294967296)
+-    value = ((value & 0x0000FFFF0000FFFF) * (4294967296 * 10000 + 1)) >> 32;
++        // And finally with * 10000 and shift of 32 (2^32 = 4294967296)
++        value = ((value & 0x0000FFFF0000FFFF) * (4294967296 * 10000 + 1)) >> 32;
+ 
+-    // With the example this gives 0x$$$$$$$$00bc614e
+-    //                                       12345678
+-    // Now we just truncate to the lower part
+-    return u32(value);
++        // With the example this gives 0x$$$$$$$$00bc614e
++        //                                       12345678
++
++        // Now we just truncate to the lower part
++        return u32(value);
++    } else {
++        value -= 0x3030303030303030;
++
++        value = (value & 0x0fL)
++            + ((value & (0x0fL << 8)) >> 8) * 10
++            + ((value & (0x0fL << 16)) >> 16) * 100
++            + ((value & (0x0fL << 24)) >> 24) * 1000
++            + ((value & (0x0fL << 32)) >> 32) * 10000
++            + ((value & (0x0fL << 40)) >> 40) * 100000
++            + ((value & (0x0fL << 48)) >> 48) * 1000000
++            + ((value & (0x0fL << 56)) >> 56) * 10000000;
++
++        // Now we just truncate to the lower part
++        return u32(value);
++    }
+ }
+ 
+ template<typename IsDoneCallback, typename Has8CharsLeftCallback>
+diff --git a/AK/Math.h b/AK/Math.h
+index 1a354a7488..fe6c0c3d35 100644
+--- a/AK/Math.h
++++ b/AK/Math.h
+@@ -8,6 +8,7 @@
+ 
+ #include <AK/BuiltinWrappers.h>
+ #include <AK/Concepts.h>
++#include <AK/Endian.h>
+ #include <AK/FloatingPoint.h>
+ #include <AK/NumericLimits.h>
+ #include <AK/StdLibExtraDetails.h>
+@@ -765,14 +766,21 @@ constexpr T log2(T x)
+ 
+     // FIXME: Handle denormalized numbers separately
+ 
+-    FloatExtractor<T> mantissa_ext {
+-        .mantissa = ext.mantissa,
+-        .exponent = FloatExtractor<T>::exponent_bias,
+-        .sign = ext.sign
+-    };
+-
+     // (1 <= mantissa < 2)
+-    T m = mantissa_ext.d;
++    T m;
++    if constexpr (HostIsLittleEndian) {
++        m = ((FloatExtractor<T>) {
++                 .mantissa = ext.mantissa,
++                 .exponent = FloatExtractor<T>::exponent_bias,
++                 .sign = ext.sign })
++                .d;
++    } else {
++        m = ((FloatExtractor<T>) {
++                 .sign = ext.sign,
++                 .exponent = FloatExtractor<T>::exponent_bias,
++                 .mantissa = ext.mantissa })
++                .d;
++    }
+ 
+     // This is a reconstruction of one of Sun's algorithms
+     // They use a transformation to lower the problem space,
