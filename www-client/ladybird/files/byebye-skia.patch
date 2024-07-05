@@ -11,25 +11,6 @@ index 8f8b473375..af8b2e188f 100644
  
 -target_link_libraries(LibWeb PRIVATE LibCore LibCrypto LibJS LibHTTP LibGfx LibIPC LibRegex LibSyntax LibTextCodec LibUnicode LibAudio LibMedia LibWasm LibXML LibIDL LibURL LibTLS unofficial::skia::skia)
 +target_link_libraries(LibWeb PRIVATE LibCore LibCrypto LibJS LibHTTP LibGfx LibIPC LibRegex LibSyntax LibTextCodec LibUnicode LibAudio LibMedia LibWasm LibXML LibIDL LibURL LibTLS)
-diff --git a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
-index 3c41b16a76..6cbd4d5461 100644
---- a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
-+++ b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
-@@ -1190,13 +1190,1 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
--    auto display_list_player_type = page().client().display_list_player_type();
--    if (display_list_player_type == DisplayListPlayerType::Skia) {
--#ifdef AK_OS_MACOS
--        if (m_metal_context && m_skia_backend_context && is<Painting::IOSurfaceBackingStore>(target)) {
--            auto& iosurface_backing_store = static_cast<Painting::IOSurfaceBackingStore&>(target);
--            auto texture = m_metal_context->create_texture_from_iosurface(iosurface_backing_store.iosurface_handle());
--            Painting::DisplayListPlayerSkia player(*m_skia_backend_context, *texture);
--            display_list.execute(player);
--            return;
--        }
--#endif
--        Painting::DisplayListPlayerSkia player(target.bitmap());
--        display_list.execute(player);
-+    if (0) {
 diff --git a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp b/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
 index d2d1259763..64bdba2d71 100644
 --- a/Userland/Libraries/LibWeb/SVG/SVGDecodedImageData.cpp
@@ -58,3 +39,64 @@ index 476d6192d5..a8c126e16e 100644
 @@ -735,2 +734,0 @@ Web::PaintingCommandExecutorType PageClient::painting_command_executor_type() co
 -    if (s_use_skia_painter)
 -        return Web::DisplayListPlayerType::Skia;
+diff --git a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
+index d5dd24cd51..3b6fef9753 100644
+--- a/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
++++ b/Userland/Libraries/LibWeb/HTML/TraversableNavigable.cpp
+@@ -28,26 +28,6 @@ TraversableNavigable::TraversableNavigable(JS::NonnullGCPtr<Page> page)
+     : Navigable(page)
+     , m_session_history_traversal_queue(vm().heap().allocate_without_realm<SessionHistoryTraversalQueue>())
+ {
+-#ifdef AK_OS_MACOS
+-    auto display_list_player_type = page->client().display_list_player_type();
+-    if (display_list_player_type == DisplayListPlayerType::Skia) {
+-        m_metal_context = Core::get_metal_context();
+-        m_skia_backend_context = Painting::DisplayListPlayerSkia::create_metal_context(*m_metal_context);
+-    }
+-#endif
+-
+-#ifdef USE_VULKAN
+-    auto display_list_player_type = page->client().display_list_player_type();
+-    if (display_list_player_type == DisplayListPlayerType::Skia) {
+-        auto maybe_vulkan_context = Core::create_vulkan_context();
+-        if (!maybe_vulkan_context.is_error()) {
+-            auto vulkan_context = maybe_vulkan_context.release_value();
+-            m_skia_backend_context = Painting::DisplayListPlayerSkia::create_vulkan_context(vulkan_context);
+-        } else {
+-            dbgln("Vulkan context creation failed: {}", maybe_vulkan_context.error());
+-        }
+-    }
+-#endif
+ }
+ 
+ TraversableNavigable::~TraversableNavigable() = default;
+@@ -1203,28 +1183,7 @@ void TraversableNavigable::paint(DevicePixelRect const& content_rect, Painting::
+     paint_config.has_focus = paint_options.has_focus;
+     record_display_list(display_list_recorder, paint_config);
+ 
+-    auto display_list_player_type = page().client().display_list_player_type();
+-    if (display_list_player_type == DisplayListPlayerType::Skia) {
+-#ifdef AK_OS_MACOS
+-        if (m_metal_context && m_skia_backend_context && is<Painting::IOSurfaceBackingStore>(target)) {
+-            auto& iosurface_backing_store = static_cast<Painting::IOSurfaceBackingStore&>(target);
+-            auto texture = m_metal_context->create_texture_from_iosurface(iosurface_backing_store.iosurface_handle());
+-            Painting::DisplayListPlayerSkia player(*m_skia_backend_context, *texture);
+-            display_list.execute(player);
+-            return;
+-        }
+-#endif
+-
+-#ifdef USE_VULKAN
+-        if (m_skia_backend_context) {
+-            Painting::DisplayListPlayerSkia player(*m_skia_backend_context, target.bitmap());
+-            display_list.execute(player);
+-            return;
+-        }
+-#endif
+-
+-        Painting::DisplayListPlayerSkia player(target.bitmap());
+-        display_list.execute(player);
++    if (0) {
+     } else {
+         Painting::DisplayListPlayerCPU player(target.bitmap());
+         display_list.execute(player);
