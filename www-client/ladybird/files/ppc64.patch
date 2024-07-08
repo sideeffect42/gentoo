@@ -1,56 +1,13 @@
-diff --git a/AK/Platform.h b/AK/Platform.h
-index b75aa087e7..ce329fd9ca 100644
---- a/AK/Platform.h
-+++ b/AK/Platform.h
-@@ -39,6 +39,23 @@
- #    define AK_IS_ARCH_RISCV64() 0
- #endif
- 
-+#if defined(__ppc64__) || defined(__PPC64__)
-+#    define AK_IS_ARCH_PPC64() 1
-+#else
-+#    define AK_IS_ARCH_PPC64() 0
-+#endif
-+#if defined(__ppc64le__) || defined(__PPC64LE__)
-+#    define AK_IS_ARCH_PPC64LE() 1
-+#else
-+#    define AK_IS_ARCH_PPC64LE() 0
-+#endif
-+
-+#if defined(__ppc__) || defined(__PPC__) || defined(__powerpc__) || defined(__powerpc) || defined(__POWERPC__)
-+#    define AK_IS_ARCH_PPC() 1
-+#else
-+#    define AK_IS_ARCH_PPC() 0
-+#endif
-+
- #ifdef __wasm32__
- #    define AK_IS_ARCH_WASM32() 1
- #else
 diff --git a/Userland/Libraries/LibJS/Runtime/Value.h b/Userland/Libraries/LibJS/Runtime/Value.h
-index f1ebf841d3..c13aadc0c3 100644
+index f1ebf841d3..2b6eb76297 100644
 --- a/Userland/Libraries/LibJS/Runtime/Value.h
 +++ b/Userland/Libraries/LibJS/Runtime/Value.h
-@@ -435,7 +435,7 @@ public:
-         // For x86_64 and riscv64 the top 16 bits should be sign extending the "real" top bit (47th).
-         // So first shift the top 16 bits away then using the right shift it sign extends the top 16 bits.
-         return static_cast<FlatPtr>((static_cast<i64>(encoded << 16)) >> 16);
--#elif ARCH(AARCH64)
-+#elif ARCH(AARCH64) || ARCH(PPC64) || ARCH(PPC64LE)
+@@ -439,7 +439,7 @@ public:
          // For AArch64 the top 16 bits of the pointer should be zero.
          return static_cast<FlatPtr>(encoded & 0xffff'ffff'ffffULL);
  #else
-diff --git a/Userland/Libraries/LibWeb/Loader/UserAgent.h b/Userland/Libraries/LibWeb/Loader/UserAgent.h
-index ad75fd8928..a44fc36640 100644
---- a/Userland/Libraries/LibWeb/Loader/UserAgent.h
-+++ b/Userland/Libraries/LibWeb/Loader/UserAgent.h
-@@ -19,6 +19,10 @@ namespace Web {
- #    define CPU_STRING "x86"
- #elif ARCH(RISCV64)
- #    define CPU_STRING "RISC-V 64"
-+#elif ARCH(PPC)
-+#    define CPU_STRING "PowerPC"
-+#elif ARCH(PPC64) || ARCH(PPC64LE)
-+#    define CPU_STRING "PowerPC64"
- #else
- #    error Unknown architecture
+-#    error "Unknown architecture. Don't know whether pointers need to be sign-extended."
++        return static_cast<FlatPtr>(encoded);
  #endif
+     }
+ 

@@ -65,9 +65,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR:?}/ByteBuffer-overflow.patch"
 	"${FILESDIR:?}/ppc64.patch"
-	"${FILESDIR:?}/big-endian.patch"
+	"${FILESDIR:?}/big-endian-crypto.patch"
 	"${FILESDIR:?}/no-install-testfiles.patch"
 	"${FILESDIR:?}/no-install-generators.patch"
 	# couldn't figure out how to build this trash fire

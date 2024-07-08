@@ -1,0 +1,116 @@
+diff --git a/Userland/Libraries/LibWeb/Crypto/CryptoAlgorithms.cpp b/Userland/Libraries/LibWeb/Crypto/CryptoAlgorithms.cpp
+index cc485d8a4f..bbe1181c88 100644
+--- a/Userland/Libraries/LibWeb/Crypto/CryptoAlgorithms.cpp
++++ b/Userland/Libraries/LibWeb/Crypto/CryptoAlgorithms.cpp
+@@ -44,8 +44,6 @@ AlgorithmMethods::~AlgorithmMethods() = default;
+ // https://w3c.github.io/webcrypto/#big-integer
+ static ::Crypto::UnsignedBigInteger big_integer_from_api_big_integer(JS::GCPtr<JS::Uint8Array> const& big_integer)
+ {
+-    static_assert(AK::HostIsLittleEndian, "This method needs special treatment for BE");
+-
+     // The BigInteger typedef is a Uint8Array that holds an arbitrary magnitude unsigned integer
+     // **in big-endian order**. Values read from the API SHALL have minimal typed array length
+     // (that is, at most 7 leading zero bits, except the value 0 which shall have length 8 bits).
+@@ -56,6 +54,7 @@ static ::Crypto::UnsignedBigInteger big_integer_from_api_big_integer(JS::GCPtr<J
+     ::Crypto::UnsignedBigInteger result(0);
+     if (buffer.size() > 0) {
+
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+         // We need to reverse the buffer to get it into little-endian order
+         Vector<u8, 32> reversed_buffer;
+         reversed_buffer.resize(buffer.size());
+@@ -64,6 +63,9 @@ static ::Crypto::UnsignedBigInteger big_integer_from_api_big_integer(JS::GCPtr<J
+         }
+
+         result = ::Crypto::UnsignedBigInteger::import_data(reversed_buffer.data(), reversed_buffer.size());
++#else
++        result = ::Crypto::UnsignedBigInteger::import_data(buffer.data(), buffer.size());
++#endif
+     }
+     return result;
+ }
+@@ -71,8 +73,6 @@ static ::Crypto::UnsignedBigInteger big_integer_from_api_big_integer(JS::GCPtr<J
+ // https://www.rfc-editor.org/rfc/rfc7518#section-2
+ ErrorOr<String> base64_url_uint_encode(::Crypto::UnsignedBigInteger integer)
+ {
+-    static_assert(AK::HostIsLittleEndian, "This code assumes little-endian");
+-
+     // The representation of a positive or zero integer value as the
+     // base64url encoding of the value's unsigned big-endian
+     // representation as an octet sequence.  The octet sequence MUST
+@@ -87,6 +87,7 @@ ErrorOr<String> base64_url_uint_encode(::Crypto::UnsignedBigInteger integer)
+
+     auto data_slice = bytes.bytes().slice(bytes.size() - data_size, data_size);
+
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+     // We need to encode the integer's big endian representation as a base64 string
+     Vector<u8, 32> byte_swapped_data;
+     byte_swapped_data.ensure_capacity(data_size);
+@@ -94,6 +95,9 @@ ErrorOr<String> base64_url_uint_encode(::Crypto::UnsignedBigInteger integer)
+         byte_swapped_data.append(data_slice[data_size - i - 1]);
+
+     auto encoded = TRY(encode_base64url(byte_swapped_data));
++#else
++    auto encoded = TRY(encode_base64url(data_slice));
++#endif
+
+     // FIXME: create a version of encode_base64url that omits padding bytes
+     if (auto first_padding_byte = encoded.find_byte_offset('='); first_padding_byte.has_value())
+@@ -104,7 +108,6 @@ ErrorOr<String> base64_url_uint_encode(::Crypto::UnsignedBigInteger integer)
+ WebIDL::ExceptionOr<::Crypto::UnsignedBigInteger> base64_url_uint_decode(JS::Realm& realm, String const& base64_url_string)
+ {
+     auto& vm = realm.vm();
+-    static_assert(AK::HostIsLittleEndian, "This code assumes little-endian");
+
+     // FIXME: Create a version of decode_base64url that ignores padding inconsistencies
+     auto padded_string = base64_url_string;
+@@ -120,6 +123,7 @@ WebIDL::ExceptionOr<::Crypto::UnsignedBigInteger> base64_url_uint_decode(JS::Rea
+     }
+     auto base64_bytes = base64_bytes_or_error.release_value();
+
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+     // We need to swap the integer's big-endian representation to little endian in order to import it
+     Vector<u8, 32> byte_swapped_data;
+     byte_swapped_data.ensure_capacity(base64_bytes.size());
+@@ -127,6 +131,9 @@ WebIDL::ExceptionOr<::Crypto::UnsignedBigInteger> base64_url_uint_decode(JS::Rea
+         byte_swapped_data.append(base64_bytes[base64_bytes.size() - i - 1]);
+
+     return ::Crypto::UnsignedBigInteger::import_data(byte_swapped_data.data(), byte_swapped_data.size());
++#else
++    return ::Crypto::UnsignedBigInteger::import_data(base64_bytes.data(), base64_bytes.size());
++#endif
+ }
+
+ // https://w3c.github.io/webcrypto/#concept-parse-an-asn1-structure
+diff --git a/Userland/Libraries/LibWeb/Crypto/KeyAlgorithms.cpp b/Userland/Libraries/LibWeb/Crypto/KeyAlgorithms.cpp
+index fb3d018fd9..fabbce2869 100644
+--- a/Userland/Libraries/LibWeb/Crypto/KeyAlgorithms.cpp
++++ b/Userland/Libraries/LibWeb/Crypto/KeyAlgorithms.cpp
+@@ -90,8 +90,6 @@ void RsaKeyAlgorithm::visit_edges(Visitor& visitor)
+
+ WebIDL::ExceptionOr<void> RsaKeyAlgorithm::set_public_exponent(::Crypto::UnsignedBigInteger exponent)
+ {
+-    static_assert(AK::HostIsLittleEndian, "This code assumes a little endian host");
+-
+     auto& realm = this->realm();
+     auto& vm = this->vm();
+
+@@ -103,6 +101,7 @@ WebIDL::ExceptionOr<void> RsaKeyAlgorithm::set_public_exponent(::Crypto::Unsigne
+
+     // The BigInteger typedef from the WebCrypto spec requires the bytes in the Uint8Array be ordered in Big Endian
+
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+     Vector<u8, 32> byte_swapped_data;
+     byte_swapped_data.ensure_capacity(data_size);
+     for (size_t i = 0; i < data_size; ++i)
+@@ -110,6 +109,10 @@ WebIDL::ExceptionOr<void> RsaKeyAlgorithm::set_public_exponent(::Crypto::Unsigne
+
+     m_public_exponent = TRY(JS::Uint8Array::create(realm, byte_swapped_data.size()));
+     m_public_exponent->viewed_array_buffer()->buffer().overwrite(0, byte_swapped_data.data(), byte_swapped_data.size());
++#else
++    m_public_exponent = TRY(JS::Uint8Array::create(realm, data_slice.size()));
++    m_public_exponent->viewed_array_buffer()->buffer().overwrite(0, data_slice.data(), data_slice.size());
++#endif
+
+     return {};
+ }
