@@ -34,7 +34,7 @@ RESTRICT="!test? ( test )"
 
 # sdl2 for Meta/Lagom/Contrib/VideoPlayerSDL?
 RDEPEND="
-	|| ( >=sys-devel/gcc-12 >=sys-devel/clang-17 )
+	|| ( >=sys-devel/gcc-13 >=sys-devel/clang-17 )
 	dev-libs/icu
 	media-libs/woff2
 	>=dev-db/sqlite-3
