@@ -3,30 +3,24 @@
 
 EAPI=8
 
-inherit desktop
-
 # force ninja, the emake generator errors
 CMAKE_MAKEFILE_GENERATOR=ninja
-inherit cmake
-
 PYTHON_COMPAT=( python3_{6..12} )
-inherit python-any-r1
 
-inherit git-r3
+inherit desktop cmake python-any-r1 git-r3
+
+DESCRIPTION="Ladybird is an ongoing project to build a truly independent web browser from scratch."
+HOMEPAGE="https://www.ladybird.dev/"
 EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
+LICENSE="BSD-2"
+SLOT="0"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 
 EXTRA_CACERT_VERSION="2023-12-12"
-
 SRC_URI="
 	https://curl.se/ca/cacert-${EXTRA_CACERT_VERSION:?}.pem
 	https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat
 "
-
-DESCRIPTION="Ladybird is an ongoing project to build a truly independent web browser from scratch."
-HOMEPAGE="https://www.ladybird.dev/"
-LICENSE="BSD-2"
-SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc64"
 
 IUSE="+gui pulseaudio test"
 
@@ -34,7 +28,6 @@ RESTRICT="!test? ( test )"
 
 # sdl2 for Meta/Lagom/Contrib/VideoPlayerSDL?
 RDEPEND="
-	|| ( >=sys-devel/gcc-13 >=sys-devel/clang-17 )
 	dev-libs/icu
 	media-libs/woff2
 	>=dev-db/sqlite-3
@@ -56,6 +49,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	|| ( >=sys-devel/gcc-13 >=sys-devel/clang-17 )
 	virtual/pkgconfig
 	>=dev-build/cmake-3.25
 	dev-qt/qttools:6
