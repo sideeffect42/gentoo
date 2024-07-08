@@ -100,10 +100,9 @@ src_install() {
 	cmake_src_install
 
 	# install launcher
-	for s in 16 32
-	do
-		newicon -s $((s)) -c apps -t hicolor "${S:?}/Base/res/icons/$((s))x$((s))/app-browser.png" ladybird.png
-	done
+	newicon -s 256 -c apps -t hicolor "${S:?}/Ladybird/Icons/ladybird.png" ladybird.png
+	newicon -s 32 -c apps -t hicolor "${S:?}/Base/res/icons/32x32/app-browser.png" ladybird.png
+	newicon -s 16 -c apps -t hicolor "${S:?}/Base/res/icons/16x16/app-browser.png" ladybird.png
 
 	domenu "${FILESDIR:?}/${PN}.desktop"
 }
