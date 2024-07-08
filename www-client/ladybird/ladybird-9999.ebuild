@@ -28,7 +28,7 @@ LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 
-IUSE="+gui test"
+IUSE="+gui pulseaudio test"
 
 RESTRICT="!test? ( test )"
 
@@ -49,10 +49,8 @@ RDEPEND="
 		dev-qt/qtbase:6
 		dev-qt/qtwidgets:6
 		dev-qt/qtnetwork:6
-		|| (
-			dev-qt/qtmultimedia:6
-			media-libs/libpulse
-		)
+		pulseaudio? ( media-libs/libpulse )
+		!pulseaudio? ( dev-qt/qtmultimedia:6 )
 	)
 "
 DEPEND="${RDEPEND}"
@@ -95,6 +93,7 @@ src_configure() {
 		-DCMAKE_INSTALL_LIBEXECDIR=libexec/Lagom
 		-DCMAKE_INSTALL_INCLUDEDIR=include/Lagom
 		-DSERENITY_CACHE_DIR="${SERENITY_CACHE_DIR:?}"
+		-DHAVE_PULSEAUDIO=$(usex pulseaudio 1 0)
 		-DENABLE_NETWORK_DOWNLOADS=off
 		-DENABLE_QT=$(usex gui)
 		-DBUILD_TESTING=$(usex test)
