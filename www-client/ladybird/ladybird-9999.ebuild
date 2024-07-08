@@ -26,7 +26,7 @@ DESCRIPTION="Ladybird is an ongoing project to build a truly independent web bro
 HOMEPAGE="https://www.ladybird.dev/"
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 
 IUSE="+gui test"
 
