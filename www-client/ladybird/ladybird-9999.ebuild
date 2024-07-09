@@ -33,9 +33,10 @@ RDEPEND="
 	>=dev-db/sqlite-3
 	media-libs/fontconfig
 	media-libs/libjpeg-turbo:0=
+	media-libs/libpng[apng]
+	>=media-libs/libavif-1.0.0
 	>=x11-libs/libxkbcommon-0.5.0
 	virtual/libcrypt:=
-	media-libs/libpng[apng]
 	sys-libs/zlib
 	media-libs/libglvnd
 	gui? (
