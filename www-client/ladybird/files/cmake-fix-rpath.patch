@@ -1,0 +1,10 @@
+--- a/Meta/CMake/lagom_install_options.cmake
++++ b/Meta/CMake/lagom_install_options.cmake
+@@ -26,6 +26,6 @@ if (APPLE)
+ else()
+     set(CMAKE_INSTALL_RPATH "$ORIGIN:$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+ endif()
+-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
++set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+ 
+ set(CMAKE_INSTALL_MESSAGE NEVER)
