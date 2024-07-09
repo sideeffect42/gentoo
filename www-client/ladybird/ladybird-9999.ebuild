@@ -201,9 +201,8 @@ src_install() {
 	cmake_src_install
 
 	# install launcher
-	newicon -s 256 -c apps -t hicolor "${S:?}/Ladybird/Icons/ladybird.png" ladybird.png
-	newicon -s 32 -c apps -t hicolor "${S:?}/Base/res/icons/32x32/app-browser.png" ladybird.png
-	newicon -s 16 -c apps -t hicolor "${S:?}/Base/res/icons/16x16/app-browser.png" ladybird.png
+	newicon -s 48 -c apps -t hicolor "${S:?}/Base/res/icons/48x48/app-browser.png" ladybird.png
+	newicon -s 128 -c apps -t hicolor "${S:?}/Base/res/icons/128x128/app-browser.png" ladybird.png
 
 	domenu "${FILESDIR:?}/${PN}.desktop"
 }
