@@ -14,7 +14,7 @@ HOMEPAGE="https://www.ladybird.dev/"
 EGIT_REPO_URI="https://github.com/LadybirdWebBrowser/${PN}.git"
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc64"
+#KEYWORDS="~amd64 ~arm64 ~ppc64"
 
 EXTRA_CACERT_VERSION="2023-12-12"
 SRC_URI="
