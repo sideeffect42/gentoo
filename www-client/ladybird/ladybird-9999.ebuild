@@ -78,8 +78,6 @@ PATCHES=(
 	"${FILESDIR}/cmake-fix-rpath.patch"
 	"${FILESDIR}/ppc64.patch"
 	"${FILESDIR}/big-endian-crypto.patch"
-	"${FILESDIR}/no-install-testfiles.patch"
-	"${FILESDIR}/no-install-generators.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
