@@ -96,16 +96,27 @@ src_unpack() {
 
 	if use skia
 	then
-		# fetch Skia
 		git-r3_fetch "${SKIA_EGIT_REPO_URI}" "${SKIA_EGIT_COMMIT:-main}"
 		git-r3_checkout "${SKIA_EGIT_REPO_URI}" "${WORKDIR}/skia"
+	fi
+}
 
-		# patch Skia
+src_prepare() {
+	cmake_src_prepare
+
+	# patch (out) Skia
+	if use skia
+	then
 		pushd "${WORKDIR}/skia"
 		eapply "${FILESDIR}"/skia-*.patch
 		popd
+	else
+		eapply "${FILESDIR}/byebye-skia.patch"
+	fi
 
-		# build Skia
+	if use skia
+	then
+		# build Skia in prepare stage because it must be present for Ladybird's configure stage to succeed.
 		einfo "Compiling Skia..."
 
 		pushd "${WORKDIR}/skia"
@@ -169,8 +180,6 @@ src_unpack() {
 		popd
 
 		einfo "Skia compiled."
-	else
-		eapply "${FILESDIR}/byebye-skia.patch"
 	fi
 }
 
