@@ -77,7 +77,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/cmake-fix-rpath.patch"
 	"${FILESDIR}/ppc64.patch"
-	"${FILESDIR}/big-endian-crypto.patch"
 )
 
 SERENITY_CACHE_DIR="${WORKDIR}/caches"
